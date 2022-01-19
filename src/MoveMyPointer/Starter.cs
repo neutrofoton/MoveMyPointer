@@ -23,13 +23,7 @@ namespace MoveMyPointer
         {
             InitializeComponent();
 
-            ScreenSize ssz = ScreenHelper.GetScreenSize();
-            msgScreenSize = String.Format("Screen size = {0} x {1}", ssz.Length, ssz.Width);
-
-            lblMessage.Text = msgScreenSize;
-
-            this.ShowInTaskbar = false;
-            this.MaximizeBox = false;
+            AdjustLayoutAndPosition();
 
             StartThread();
         }
@@ -44,6 +38,30 @@ namespace MoveMyPointer
                 return myCp;
             }
         }
+
+        private void AdjustLayoutAndPosition()
+        {
+            ScreenSize ssz = ScreenHelper.GetScreenSize();
+            msgScreenSize = String.Format("Screen size = {0} x {1}", ssz.Length, ssz.Width);
+
+            lblMessage.Text = msgScreenSize;
+
+            this.ShowInTaskbar = false;
+            this.MaximizeBox = false;
+
+           
+            int x = ssz.Length - this.Width - 10;
+            int y = ssz.Width - this.Height - 35;
+            this.Location = new Point(x, y);
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            AdjustLayoutAndPosition();
+        }
+
         private void StartThread()
         {
             Random random = new Random();
@@ -64,6 +82,9 @@ namespace MoveMyPointer
                         .AppendLine("DEBUG: ")
                         .AppendFormat("lastPoint [{0} $ {1}]", lastPoint.X, lastPoint.Y).AppendLine()
                         .AppendFormat("newPoint  [{0} $ {1}]", point.X, point.Y)
+
+                        .AppendLine()
+                        .AppendFormat("{0},{1}", this.Location.X, this.Location.Y)
                         .ToString();
 
                     if (point.X == lastPoint.X && point.Y == lastPoint.Y)
